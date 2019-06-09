@@ -1,7 +1,7 @@
 {
     "type": "package",
     "name": "innoave/bounded-number",
-    "summary": "A type representing bounded numbers",
+    "summary": "A type representing a bounded number",
     "license": "BSD-3-Clause",
     "version": "1.0.0",
     "exposed-modules": [
