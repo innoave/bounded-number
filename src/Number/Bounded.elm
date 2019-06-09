@@ -2,8 +2,9 @@ module Number.Bounded exposing
     ( Bounded
     , between
     , set, trySet, map, tryMap
-    , inc, incBy, dec, decBy
+    , inc, dec, tryInc, tryDec, incBy, decBy, tryIncBy, tryDecBy
     , value, min, max
+    , decoder, encode
     )
 
 {-| A number bounded between a minimum and a maximum.
@@ -14,11 +15,14 @@ module Number.Bounded exposing
 
 @docs set, trySet, map, tryMap
 
-@docs inc, incBy, tryInc, tryIncBy, dec, decBy, tryDec, tryDecBy
+@docs inc, dec, tryInc, tryDec, incBy, decBy, tryIncBy, tryDecBy
 
 @docs value, min, max
 
 -}
+
+import Json.Decode as JD
+import Json.Encode as JE
 
 
 {-| An opaque type that defines a number that is guaranteed to be between a given min and max bound
@@ -39,6 +43,23 @@ between a b =
 
     else
         Bounded { min_ = b, max_ = a, value_ = b }
+
+
+decoder : JD.Decoder number -> JD.Decoder (Bounded number)
+decoder numberDecoder =
+    JD.map3 (\min_ max_ value_ -> Bounded { min_ = min_, max_ = max_, value_ = value_ })
+        (JD.field "min" numberDecoder)
+        (JD.field "max" numberDecoder)
+        (JD.field "value" numberDecoder)
+
+
+encode : (number -> JE.Value) -> Bounded number -> JE.Value
+encode numberEncoder (Bounded { min_, max_, value_ }) =
+    JE.object
+        [ ( "min", numberEncoder min_ )
+        , ( "max", numberEncoder max_ )
+        , ( "value", numberEncoder value_ )
+        ]
 
 
 {-| Set the value manually. If you try to set a value greater than the max bound, the actual value
@@ -75,9 +96,9 @@ inc bounded =
     incBy 1 bounded
 
 
-incBy : number -> Bounded number -> Bounded number
-incBy number bounded =
-    set (value bounded + number) bounded
+dec : Bounded number -> Bounded number
+dec bounded =
+    decBy 1 bounded
 
 
 tryInc : Bounded number -> Maybe (Bounded number)
@@ -85,14 +106,14 @@ tryInc bounded =
     tryIncBy 1 bounded
 
 
-tryIncBy : number -> Bounded number -> Maybe (Bounded number)
-tryIncBy number bounded =
-    trySet (value bounded + number) bounded
+tryDec : Bounded number -> Maybe (Bounded number)
+tryDec bounded =
+    tryDecBy 1 bounded
 
 
-dec : Bounded number -> Bounded number
-dec bounded =
-    decBy 1 bounded
+incBy : number -> Bounded number -> Bounded number
+incBy number bounded =
+    set (value bounded + number) bounded
 
 
 decBy : number -> Bounded number -> Bounded number
@@ -100,9 +121,9 @@ decBy number bounded =
     set (value bounded - number) bounded
 
 
-tryDec : Bounded number -> Maybe (Bounded number)
-tryDec bounded =
-    tryDecBy 1 bounded
+tryIncBy : number -> Bounded number -> Maybe (Bounded number)
+tryIncBy number bounded =
+    trySet (value bounded + number) bounded
 
 
 tryDecBy : number -> Bounded number -> Maybe (Bounded number)
