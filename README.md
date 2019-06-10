@@ -32,7 +32,8 @@ Functions that modify the value of a bound number come in two variants.
         --|> Expect.equal Nothing << Bounded.value
     ```
 
-The value of a bounded number can be accessed by the `value` function.
+The value of a bounded number can be set directly by the `set` function and read using the `value`
+function.
 
 ```elm
 Bounded.between 0 10
@@ -40,3 +41,8 @@ Bounded.between 0 10
     |> Bounded.value
     --|> Expect.equal 4
 ``` 
+
+The functions `encode` and `decoder` support a default JSON representation of a bounded number.
+
+Check out the documentation of the functions as well as the fairly complete
+[unit tests](tests/BoundedTest.elm). 
