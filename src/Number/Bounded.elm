@@ -2,8 +2,7 @@ module Number.Bounded exposing
     ( Bounded
     , between
     , inc, dec, tryInc, tryDec, incBy, decBy, tryIncBy, tryDecBy
-    , set, trySet
-    , map, tryMap
+    , set, trySet, map, tryMap
     , value, min, max
     , decoder, encode
     )
@@ -31,12 +30,7 @@ neither can it get lower than its min bound.
 
 # Update
 
-@docs set, trySet
-
-
-# Transform
-
-@docs map, tryMap
+@docs set, trySet, map, tryMap
 
 
 # Query
